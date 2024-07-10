@@ -13,3 +13,7 @@ app.listen(PORT, () =>{
 app.get('/', (req, res) => {
     res.json({message:"succes "})
 })
+
+app.get('/me', (req, res) => {
+    res.json({name:"habib "})
+})
