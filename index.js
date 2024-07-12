@@ -1,7 +1,8 @@
 import express from "express"
-import dotenv from "dot-env"
+import cors from "cors"
 import conncetDB from "./src/config/dbconncet.js";
 import Product from "./src/model/product.model.js";
+
 const app = express()
 
 
@@ -11,6 +12,7 @@ conncetDB("mongodb+srv://cdxhabib:poiuuiop@cluster0.rr7ldlq.mongodb.net/next-js-
 app.listen(PORT, () =>{
     console.log(`Server running on port ${PORT}`)
 })
+app.use(cors())
 
 app.get('/', (req, res) => {
     res.json({message:"succes "})
@@ -41,6 +43,5 @@ app.get('/products/search', async(req, res) => {
         ]
       })
  
-
     res.json({product: product})
 })
