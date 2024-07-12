@@ -6,7 +6,7 @@ const app = express()
 
 
 let PORT = process.env.PORT || 8000;
-// dotenv.config()
+
 conncetDB("mongodb+srv://cdxhabib:poiuuiop@cluster0.rr7ldlq.mongodb.net/next-js-projcets?retryWrites=true&w=majority&appName=Cluster0")
 app.listen(PORT, () =>{
     console.log(`Server running on port ${PORT}`)
@@ -17,7 +17,30 @@ app.get('/', (req, res) => {
 })
 
 app.get('/products', async(req, res) => {
-    let product = await Product.find();
+    let {q} = await req.query;
+    let product = await Product.find({
+        $or: [
+          { title: { $regex: q || "", $options: 'i' } }, // Case-insensitive search in title
+          { description: { $regex: q || "", $options: 'i' } }, // Case-insensitive search in description
+          { tags: { $in: [q || ""] } } // Search within tags array
+        ]
+      })
  
+
+    res.json({product: product})
+})
+
+
+app.get('/products/search', async(req, res) => {
+    let {q} = await req.query;
+    let product = await Product.find({
+        $or: [
+          { title: { $regex: q || "", $options: 'i' } }, // Case-insensitive search in title
+          { description: { $regex: q || "", $options: 'i' } }, // Case-insensitive search in description
+          { tags: { $in: [q || ""] } } // Search within tags array
+        ]
+      })
+ 
+
     res.json({product: product})
 })
