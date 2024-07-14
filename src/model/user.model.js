@@ -13,12 +13,13 @@ const userSchema = new mongoose.Schema({
     password:{
         type:String,
         required:true,
-        maxlength: [10, 'password must be less than 30 characters'],
+       
     },
     role:{
         type:String,
         required:true,
         enum:['admin', 'user']
+        
     },
     isVerified:{
         type:Boolean,

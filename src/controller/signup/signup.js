@@ -1,48 +1,55 @@
 import e from "express";
 import { validationResult } from "express-validator";
 import User from "../../model/user.model.js";
+import bcrypt from "bcryptjs";
+const SignUpController = async (req, res, next) => {
+  // Validate data here before calling SignUpService
 
-const SignUpController = async (req,res) =>{
+  const error = validationResult(req)
+    .array()
+    .map((err) => {
+      return { message: err.msg };
+    });
 
-    // Validate data here before calling SignUpService
+  if (error.length) {
+    return res.status(400).json({
+      success: false,
+      message: error[0].message,
+    });
+  }
+  // get data from body
 
-    const error =  validationResult(req).array().map(err => {
-        return {message: err.msg}
-    })
+  const { email, password, username } = await req.body;
 
-    if(error.length){
-        return res.status(400).json({
-            success:false,
-            message:error[0].message
-        })
-    };
+  const isUserExist = await User.findOne({ email });
 
+  if (isUserExist) {
+    return res.status(400).json({
+      success: false,
+      message: "User already exist",
+    });
+  }
 
-    // get data from body 
- 
-    const {email,password,username} = await req.body;
+  //hashing password
+  var salt = bcrypt.genSaltSync(10);
+  const hashedPassword = await bcrypt.hashSync(password, salt);
 
-    const isUserExist = await User.findOne({email});
-
-    if(isUserExist){
-        return res.status(400).json({
-            success:false,
-            message: "User already exist"
-        })
-    };
-
-    const user = await User.create({email,password,username,role:"user",})
-
-    if(user){
-        return res.status(201).json({
-            success:true,
-            message: "User created successfully",
-        })
-        
-
-    };
-    
-   
-}
+  try {
+    const user = await User.create({
+      email,
+      password: hashedPassword,
+      username,
+      role: "user",
+    });
+    if (user) {
+      return res.status(201).json({
+        success: true,
+        message: "User created successfully",
+      });
+    }
+  } catch (error) {
+    next(err);
+  }
+};
 
 export default SignUpController;

@@ -1,7 +1,7 @@
 import e from "express";
 import { validationResult } from "express-validator";
 import User from "../../model/user.model.js";
-
+import bcrypt from "bcryptjs"
 const LoginController = async (req,res) =>{
 
     // Validate data here before calling SignUpService
@@ -20,7 +20,7 @@ const LoginController = async (req,res) =>{
 
     // get data from body 
  
-    const {email} = await req.body;
+    const {email,password} = await req.body;
 
     const isUserExist = await User.findOne({email});
 
@@ -33,6 +33,15 @@ const LoginController = async (req,res) =>{
 
     const user = await User.findOne({email})
 
+    const isPasswordMatch = await bcrypt.compare(password, user.password);
+
+    if(!isPasswordMatch){
+        return res.status(400).json({
+            success:false,
+            message: "Password Enter a Corrcet Password"
+        });
+    }
+
     if(user){
         return res.status(201).json({
             success:true,
@@ -40,7 +49,6 @@ const LoginController = async (req,res) =>{
             user:{email:user.email}
         })
         
-
     };
     
    

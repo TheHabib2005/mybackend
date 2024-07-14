@@ -6,6 +6,7 @@ import { delay } from "./utils/index.js";
 import SignUpController from "./src/controller/signup/signup.js";
 import { userLoginValidator, userRegistrationValidator } from "./utils/express-validator.js";
 import LoginController from "./src/controller/login/login.js";
+import mongoose from "mongoose";
 
 const app = express()
 
@@ -52,6 +53,20 @@ app.get('/', (req, res) => {
  
 //     res.json({product: product})
 // })
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+    if (err instanceof mongoose.Error) {
+        // Handle Mongoose-specific errors
+        console.error('Mongoose error:', err.message);
+        res.status(500).json({ success:false, message: 'Database error occurred. Please try again later.'});
+
+    } else {
+        // Handle other errors
+        console.error('General error:', err.message);
+        res.status(500).json({ success:false, message: 'something was wrong! Please try again later.'});
+    }
+});
 
 
 app.post("/user/signup",userRegistrationValidator, SignUpController);
