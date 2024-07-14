@@ -45,16 +45,14 @@ const LoginController = async (req,res) =>{
 
     //create a token 
 
-    const token = jwt.sign({id: user._id}, process.env.JWT_SECRET, {expiresIn: '1h'});
-
+    const token = jwt.sign({id: user._id}, process.env.JWT_SECRET, {expiresIn: '1m'});
+    const expirationDate = new Date(Date.now() + 2 * 60 * 1000);
     if(user){
         res.cookie('user-token', token, {
-            maxAge: 900000,
+            expirationDate: expirationDate,
             httpOnly: true,
             secure: true,
             sameSite: 'lax',
-            path: '/',
-            domain: 'http://localhost:3000/'
         });
         
         return res.status(201).json({

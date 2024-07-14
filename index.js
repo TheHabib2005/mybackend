@@ -21,7 +21,10 @@ conncetDB("mongodb+srv://cdxhabib:poiuuiop@cluster0.rr7ldlq.mongodb.net/next-js-
 app.listen(PORT, () =>{
     console.log(`Server running on port ${PORT}`)
 })
-app.use(cors())
+app.use(cors({
+    origin: 'http://localhost:3000', // Replace with your frontend origin
+    credentials: true // 
+}))
 app.use(cookieParser());
 dotenv.config()
 app.get('/', (req, res) => {
@@ -68,8 +71,13 @@ app.use((err, req, res, next) => {
         res.status(500).json({ success:false, message: 'something was wrong! Please try again later.'});
     }
 });
-
+console.log(process.env.JWT_SECRET);
 
 app.post("/user/signup",userRegistrationValidator, SignUpController);
 
 app.post("/user/login",userLoginValidator, LoginController);
+
+app.get("/user/logout", (req, res) => {
+    res.clearCookie("user-token");
+   return res.status(201).json({ success: true, message: "Logged out successfully" });
+});
