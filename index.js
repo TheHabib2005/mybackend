@@ -22,7 +22,7 @@ app.listen(PORT, () =>{
     console.log(`Server running on port ${PORT}`)
 })
 app.use(cors({
-    origin: 'http://localhost:3000', // Replace with your frontend origin
+    origin: 'https://simple-inside-complex.vercel.app/', // Replace with your frontend origin
     credentials: true // 
 }))
 app.use(cookieParser());
