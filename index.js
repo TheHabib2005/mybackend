@@ -1,3 +1,4 @@
+import dotenv from "dotenv";
 import express from "express"
 import cors from "cors"
 import conncetDB from "./src/config/dbconncet.js";
@@ -7,14 +8,13 @@ import SignUpController from "./src/controller/signup/signup.js";
 import { userLoginValidator, userRegistrationValidator } from "./utils/express-validator.js";
 import LoginController from "./src/controller/login/login.js";
 import mongoose from "mongoose";
-
+import cookieParser from "cookie-parser"
 const app = express()
 
 
 let PORT = process.env.PORT || 8000;
 // Middleware to parse JSON bodies
 app.use(express.json());
-
 // Middleware to parse URL-encoded bodies
 app.use(express.urlencoded({ extended: true }));
 conncetDB("mongodb+srv://cdxhabib:poiuuiop@cluster0.rr7ldlq.mongodb.net/next-js-projcets?retryWrites=true&w=majority&appName=Cluster0")
@@ -22,7 +22,8 @@ app.listen(PORT, () =>{
     console.log(`Server running on port ${PORT}`)
 })
 app.use(cors())
-
+app.use(cookieParser());
+dotenv.config()
 app.get('/', (req, res) => {
     res.json({message:"succes "})
 })

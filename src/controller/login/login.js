@@ -2,6 +2,7 @@ import e from "express";
 import { validationResult } from "express-validator";
 import User from "../../model/user.model.js";
 import bcrypt from "bcryptjs"
+import jwt from "jsonwebtoken";
 const LoginController = async (req,res) =>{
 
     // Validate data here before calling SignUpService
@@ -42,7 +43,20 @@ const LoginController = async (req,res) =>{
         });
     }
 
+    //create a token 
+
+    const token = jwt.sign({id: user._id}, process.env.JWT_SECRET, {expiresIn: '1h'});
+
     if(user){
+        res.cookie('user-token', token, {
+            maxAge: 900000,
+            httpOnly: true,
+            secure: true,
+            sameSite: 'lax',
+            path: '/',
+            domain: 'http://localhost:3000/'
+        });
+        
         return res.status(201).json({
             success:true,
             message: "User Login successfully",
