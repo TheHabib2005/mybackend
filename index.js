@@ -24,7 +24,7 @@ app.listen(PORT, () =>{
 app.use(cors({
     origin: 'https://simple-inside-complex.vercel.app/login', // Replace with your frontend origin
     credentials: true ,
-    methods: ['GET', 'POST', 'PUT', 'DELETE'], /
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
 }))
 app.use(cookieParser());
 dotenv.config()
