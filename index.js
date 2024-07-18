@@ -5,10 +5,11 @@ import conncetDB from "./src/config/dbconncet.js";
 import Product from "./src/model/product.model.js";
 import { delay } from "./utils/index.js";
 import SignUpController from "./src/controller/signup/signup.js";
-import { userLoginValidator, userRegistrationValidator } from "./utils/express-validator.js";
+import { GoogleLoginValidator, userLoginValidator, userRegistrationValidator } from "./utils/express-validator.js";
 import LoginController from "./src/controller/login/login.js";
 import mongoose from "mongoose";
 import cookieParser from "cookie-parser"
+import saveGoogleUser from "./src/controller/save-user/save.google.js";
 const app = express()
 
 
@@ -22,7 +23,7 @@ app.listen(PORT, () =>{
     console.log(`Server running on port ${PORT}`)
 })
 app.use(cors({
-    origin: 'https://simple-inside-complex.vercel.app/', // Replace with your frontend origin
+    origin: 'https://simple-inside-complex.vercel.app', // Replace with your frontend origin
     credentials: true // 
 }))
 app.use(cookieParser());
@@ -58,6 +59,7 @@ app.get('/', (req, res) => {
 //     res.json({product: product})
 // })
 
+
 // Error handling middleware
 app.use((err, req, res, next) => {
     if (err instanceof mongoose.Error) {
@@ -67,6 +69,7 @@ app.use((err, req, res, next) => {
 
     } else {
         // Handle other errors
+
         console.error('General error:', err.message);
         res.status(500).json({ success:false, message: 'something was wrong! Please try again later.'});
     }
@@ -81,3 +84,6 @@ app.get("/user/logout", (req, res) => {
     res.clearCookie("user-token");
    return res.status(201).json({ success: true, message: "Logged out successfully" });
 });
+
+app.post("/user/save-user",GoogleLoginValidator, saveGoogleUser);
+
